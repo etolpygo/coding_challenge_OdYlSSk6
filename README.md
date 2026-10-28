@@ -63,14 +63,18 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Install and start Ollama
+### 3. Start Ollama via Docker
 
-Download from [https://ollama.com/download](https://ollama.com/download), then:
+For platform compatibility, the recommended approach is to run Ollama via Docker:
 
 ```bash
-ollama pull llama3.2        # ~2 GB download, requires ~4 GB RAM
-ollama serve                # starts the local API on http://localhost:11434
+docker compose up -d                                      # start Ollama in the background
+docker exec ollama ollama pull llama3.2                   # download the model (~2 GB, requires ~4 GB RAM)
 ```
+
+Ollama will be available at `http://localhost:11434`. To stop it: `docker compose down`.
+
+> **Native install:** download from [ollama.com/download](https://ollama.com/download), then run `ollama pull llama3.2 && ollama serve`.
 
 ### 4. Ingest the data
 
