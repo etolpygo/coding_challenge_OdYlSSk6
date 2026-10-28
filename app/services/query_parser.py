@@ -12,16 +12,37 @@ from dataclasses import dataclass, field
 
 GENRES = {
     "action", "adventure", "animation", "comedy", "crime", "documentary",
-    "drama", "family", "fantasy", "history", "horror", "music", "mystery",
-    "romance", "science fiction", "sci-fi", "scifi", "thriller", "war", "western",
+    "drama", "fantasy", "film-noir", "horror", "imax", "musical", "mystery",
+    "romance", "sci-fi", "scifi", "science fiction", "thriller", "war", "western",
+    "children",
 }
 
+# Maps user-friendly terms to the exact genre names stored in the DB (MovieLens conventions)
 GENRE_ALIASES = {
-    "sci-fi": "science fiction",
-    "scifi": "science fiction",
-    "sci fi": "science fiction",
-    "rom-com": "romance",
-    "romcom": "romance",
+    "science fiction": "Sci-Fi",
+    "sci fi": "Sci-Fi",
+    "scifi": "Sci-Fi",
+    "sci-fi": "Sci-Fi",
+    "rom-com": "Romance",
+    "romcom": "Romance",
+    "romance": "Romance",
+    "action": "Action",
+    "adventure": "Adventure",
+    "animation": "Animation",
+    "comedy": "Comedy",
+    "crime": "Crime",
+    "documentary": "Documentary",
+    "drama": "Drama",
+    "fantasy": "Fantasy",
+    "film-noir": "Film-Noir",
+    "horror": "Horror",
+    "imax": "IMAX",
+    "musical": "Musical",
+    "mystery": "Mystery",
+    "thriller": "Thriller",
+    "war": "War",
+    "western": "Western",
+    "children": "Children",
 }
 
 RECOMMEND_PATTERNS = re.compile(
@@ -67,12 +88,10 @@ def parse(text: str) -> ParsedQuery:
     else:
         q.intent = "search"
 
-    # Genres
-    for alias, canonical in GENRE_ALIASES.items():
-        lower = lower.replace(alias, canonical)
-    for genre in GENRES:
-        if genre in lower:
-            canonical = GENRE_ALIASES.get(genre, genre)
+    # Genres — check user text against all known terms, map to DB-canonical names
+    for term in GENRES:
+        if term in lower:
+            canonical = GENRE_ALIASES.get(term, term.title())
             if canonical not in q.genres:
                 q.genres.append(canonical)
 
